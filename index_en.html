@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brain Focus Headband</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin:0;
+    padding:0;
+    background:#f0f0f5;
+    text-align: center;
+}
+header {
+    background:#2c3e50;
+    color:white;
+    padding:20px;
+    font-size:24px;
+}
+nav {
+    margin:15px 0;
+}
+nav button {
+    padding:10px 20px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    background:#3498db;
+    color:white;
+    font-size:16px;
+}
+nav button:hover { background:#2980b9; }
+section {
+    display:none;
+    padding:20px;
+}
+.card {
+    background:white;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    margin:10px auto;
+    max-width:400px;
+    padding:20px;
+    text-align:center;
+}
+button.action {
+    background:#e74c3c;
+}
+button.action:hover { background:#c0392b; }
+#warning { color:red; font-weight:bold; margin-top:10px; }
+#focusValue { font-size:28px; color:#e74c3c; margin:10px 0; }
+</style>
+</head>
+<body>
+
+<header>Brain Focus Headband</header>
+
+<nav>
+<button onclick="showSection('home')">Home</button>
+<button onclick="showSection('measurement')">Measurement</button>
+<button onclick="showSection('info')">Info</button>
+<button onclick="showSection('ai')">Smart Analysis</button>
+</nav>
+
+<!-- Home Page -->
+<section id="home" style="display:block;">
+<div class="card">
+<h2>Welcome to the Brain Focus Headband Project</h2>
+<p>A wearable device that monitors brain activity during study and analyzes focus and physical fatigue.<br>
+You can try the simulation or explore information and tips.</p>
+</div>
+</section>
+
+<!-- Measurement Page -->
+<section id="measurement">
+<div class="card">
+<strong>Current Focus Level:</strong>
+<div id="focusValue">--%</div>
+<button class="action" onclick="simulateOnce()">Update (Simulation)</button>
+<div id="warning">Warning: This is only a simulation for demonstration and not an actual measurement!</div>
+<button onclick="connectBLE()">Connect to Device (Bluetooth)</button>
+</div>
+<div id="reportArea" class="card">
+Reports will appear here.
+</div>
+</section>
+
+<!-- Info Page -->
+<section id="info">
+<div class="card">
+<h3>Importance of Focus for Physical Health</h3>
+<p>Sitting for long periods without movement can cause muscle fatigue and back or neck pain.<br>
+Proper sleep and regular movement help maintain physical health during study.<br>
+This project focuses on monitoring low focus and analyzing physical causes.</p>
+</div>
+</section>
+
+<!-- AI / Smart Analysis Page -->
+<section id="ai">
+<div class="card">
+<h3>Smart Focus Analysis</h3>
+<p>The system will analyze your focus levels and suggest possible physical reasons for low focus:</p>
+<ul id="aiReport"></ul>
+<button onclick="analyzeFocus()">Run Smart Analysis</button>
+</div>
+</section>
+
+<script>
+// ---------------- Page Switching ----------------
+function showSection(id){
+    const sections = document.querySelectorAll('section');
+    sections.forEach(s => s.style.display='none');
+    document.getElementById(id).style.display='block';
+}
+
+// ---------------- Focus Simulation ----------------
+function getRandomFocus(){ return Math.floor(Math.random()*100); }
+function simulateOnce(){ showFocus(getRandomFocus()); }
+
+function showFocus(f){
+    document.getElementById('focusValue').innerText = f + '%';
+    const r = document.getElementById('reportArea');
+    if(f < 50){
+        r.innerHTML = 'Low focus ('+f+'%). Possible physical reasons:<br>'
+        + '<button onclick="alert(\'Possible physical fatigue\')">Fatigue</button>'
+        + '<button onclick="alert(\'Incorrect sitting posture\')">Bad posture</button>'
+        + '<button onclick="alert(\'Insufficient sleep\')">Lack of sleep</button>';
+    } else {
+        r.innerHTML = 'Good focus ('+f+'%). Keep it up!';
+    }
+}
+
+// ---------------- Bluetooth Device Connection ----------------
+async function connectBLE(){
+    alert('Device connection is possible after a real BLE device is connected.');
+}
+
+// ---------------- Smart AI Analysis ----------------
+function analyzeFocus(){
+    const f = Math.floor(Math.random()*100); // simulated focus
+    const report = document.getElementById('aiReport');
+    report.innerHTML = '';
+    let reasons = [];
+    if(f < 30) reasons = ['Severe physical fatigue','Insufficient sleep','Bad posture'];
+    else if(f < 60) reasons = ['Moderate fatigue','Insufficient sleep'];
+    else reasons = ['Good focus'];
+    reasons.forEach(r => {
+        const li = document.createElement('li');
+        li.innerText = r;
+        report.appendChild(li);
+    });
+    alert('AI Analysis: Focus level '+f+'%');
+}
+</script>
+
+</body>
+</html>

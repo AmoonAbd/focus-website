@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>تقرير التركيز الجسدي</title>
+<style>
+body { font-family: Arial; padding:20px; direction: rtl; background:#f0f0f0; }
+.card { background:#fff; border-radius:8px; padding:16px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:12px; }
+button { padding:8px 14px; margin:6px; cursor:pointer; }
+</style>
+</head>
+<body>
+<h1>لوحة تحليل التركيز الجسدي</h1>
+
+<div class="card">
+  <strong>نسبة التركيز الحالية:</strong>
+  <div id="focusValue" style="font-size:28px; margin-top:8px">--%</div>
+  <button onclick="simulateOnce()">تحديث (محاكاة)</button>
+  <button onclick="connectBLE()">الاتصال بالجهاز (Bluetooth)</button>
+</div>
+
+<div id="reportArea" class="card">
+التقارير ستظهر هنا.
+</div>
+
+<script>
+// ---------------- محاكاة بيانات التركيز ----------------
+function getRandomFocus() { return Math.floor(Math.random()*100); }
+function simulateOnce(){ showFocus(getRandomFocus()); }
+
+// ---------------- عرض النتائج ----------------
+function showFocus(f){
+  document.getElementById('focusValue').innerText = f + '%';
+  const r = document.getElementById('reportArea');
+  if(f < 50){
+    r.innerHTML = 'تركيز منخفض ('+f+'%).<br>هل السبب جسدي؟<br>'
+      + '<button onclick="alert(\'انت متعب جسديًا؟\')">تعب جسدي</button>'
+      + '<button onclick="alert(\'وضعيه جلوسك خاطئة؟\')">وضعية خاطئة</button>'
+      + '<button onclick="alert(\'هل حصلت على نوم كافي؟\')">نوم غير كافي</button>';
+  } else {
+    r.innerHTML = 'تركيز جيد ('+f+'%). استمر!';
+  }
+}
+
+// ---------------- مثال اتصال Web Bluetooth ----------------
+async function connectBLE(){
+  try{
+    const serviceUUID = '0000ffff-0000-1000-8000-00805f9b34fb'; // مثال، استبدلي بالقيمة الحقيقية
+    const charUUID = '0000ff01-0000-1000-8000-00805f9b34fb';   // مثال
+    const device = await navigator.bluetooth.requestDevice({filters:[{services:[serviceUUID]}]});
+    const server = await device.gatt.connect();
+    const service = await server.getPrimaryService(serviceUUID);
+    const characteristic = await service.getCharacteristic(charUUID);
+    await characteristic.startNotifications();
+    characteristic.addEventListener('characteristicvaluechanged', e => {
+      const percent = e.target.value.getUint8(0); // تحويل أول بايت إلى 0-100%
+      showFocus(percent);
+    });
+    alert('تم الاتصال بالجهاز!');
+  } catch(err){
+    console.error(err);
+    alert('فشل الاتصال: '+err.message);
+  }
+}
+</script>
+</body>
+</html>
